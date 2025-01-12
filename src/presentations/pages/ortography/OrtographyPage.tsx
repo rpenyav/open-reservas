@@ -1,16 +1,23 @@
 import { useState } from "react";
 import {
   GptMessage,
+  GptOrtographyMessage,
   HumanMessage,
   TextMessageBox,
   TextMessageBoxFile,
   TextMessageBoxSelect,
   TypingLoader,
 } from "../../components";
+import { ortographyUseCase } from "../../../core/use-cases";
 
 interface Messages {
   text: string;
   isGpt: boolean;
+  info?: {
+    userScore?: number;
+    errors: string[];
+    message: string;
+  };
 }
 
 export const OrtographyPage = () => {
@@ -20,6 +27,29 @@ export const OrtographyPage = () => {
   const handlePost = async (text: string) => {
     setIsloading(true);
     setMessages((prev) => [...prev, { text: text, isGpt: false }]);
+
+    const { errors, message, ok, userScore } = await ortographyUseCase(text);
+
+    if (!ok) {
+      setMessages((prev) => [
+        ...prev,
+        { text: "no se pudo realizar la operación", isGpt: true },
+      ]);
+    } else {
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: message,
+          isGpt: true,
+          info: {
+            userScore,
+            errors,
+            message,
+          },
+        },
+      ]);
+    }
+
     setIsloading(false);
   };
 
@@ -30,7 +60,7 @@ export const OrtographyPage = () => {
           <GptMessage text="Hola, soy GPT-3 de Reservas. ¿En qué puedo ayudarte?" />
           {messages.map((message, index: number) =>
             message.isGpt ? (
-              <GptMessage key={index} text="esto es de openai" />
+              <GptOrtographyMessage key={index} {...message.info!} />
             ) : (
               <HumanMessage key={index} text={message.text} />
             )

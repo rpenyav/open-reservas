@@ -10,7 +10,7 @@ body {
 }
 
 h1 {
-  @apply text-3xl font-bold mb-4;
+  @apply text-3xl font-bold mb-4 text-indigo-400;
 }
 
 p {
@@ -22,7 +22,7 @@ ul {
 }
 
 strong {
-  @apply font-bold text-indigo-400;
+  @apply font-bold text-indigo-400 text-xl;
 }
 
 em {
