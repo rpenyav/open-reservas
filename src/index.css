@@ -38,11 +38,45 @@ em {
 }
 
 .chat-container {
-  @apply flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-white bg-opacity-5 h-full p-4;
+  @apply flex flex-col flex-auto flex-shrink-0 rounded-2xl bg-white bg-opacity-5 h-full;
+}
+
+.chat-messages a {
+  @apply underline font-bold;
+  color: #eeeccc;
+  transition: color 0.2s ease-in-out; /* Transición para un efecto suave */
+}
+
+.chat-messages a:hover {
+  color: #d4d4aa; /* Cambia el color al pasar el ratón */
 }
 
 .chat-messages {
   @apply flex flex-col h-full overflow-x-auto mb-4 overflow-scroll;
+  scrollbar-width: thin; /* Para navegadores compatibles */
+  scrollbar-color: #545f6f #243840; /* Colores del scrollbar */
+
+  /* Scrollbar para navegadores basados en Webkit */
+  &::-webkit-scrollbar {
+    width: 7px;
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #4b5563; /* Color del "pulgar" del scrollbar */
+    border-radius: 4px;
+    border: 2px solid transparent; /* Espaciado */
+    background-clip: content-box;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #374151; /* Color al pasar el ratón */
+  }
+
+  &::-webkit-scrollbar-track {
+    background-color: #243840; /* Color del fondo */
+    border-radius: 4px;
+  }
 }
 
 /* Animations */

@@ -1,73 +1,78 @@
-import React, { FormEvent, useState } from "react";
-
-interface Props {
-  onSendMessage: (message: string, selectedOption: string) => void;
-  placeholder: string;
-  disableCorrections: boolean;
-  options: Option[];
-}
-
 interface Option {
-  id: string;
   text: string;
 }
 
+interface TextMessageBoxSelectProps {
+  inputValue: string; // Valor del textarea
+  onTextChange: (text: string) => void; // Actualizar texto del textarea
+  onSendMessage: () => void; // Enviar mensaje
+  placeholder?: string;
+  options: Option[];
+  onOptionSelect: (option: Option) => void; // Enviar al seleccionar
+  isLoading: boolean; // Estado de carga
+  onAbort: () => void; // Acción para abortar
+}
+
 export const TextMessageBoxSelect = ({
+  inputValue,
+  onTextChange,
   onSendMessage,
-  placeholder,
-  disableCorrections = false,
+  placeholder = "Escribe aquí...",
   options,
-}: Props) => {
-  const [message, setMessage] = useState("");
-  const [selectedOption, setSelectedOption] = useState<string>("");
-  const handleSendMessage = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (message.trim().length === 0) return;
-
-    onSendMessage(message, selectedOption);
-    setMessage("");
+  onOptionSelect,
+  isLoading,
+  onAbort,
+}: TextMessageBoxSelectProps) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); // Evita un salto de línea en el textarea
+      onSendMessage(); // Llama a la función de envío
+    }
   };
-  return (
-    <form
-      onSubmit={handleSendMessage}
-      className="flex flex-row items-center h-16 rounded-xl bg-white w-full px-4"
-    >
-      <div className="flex-grow">
-        <div className="flex">
-          <input
-            type="text"
-            autoFocus
-            name="message"
-            className="w-full border rounded-xl text-gray-800 focus:outline-none focus:border-indigo-300 pl-4 h-10"
-            placeholder={placeholder}
-            autoComplete={disableCorrections ? "on" : "off"}
-            autoCorrect={disableCorrections ? "on" : "off"}
-            spellCheck={!!disableCorrections}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
 
-          <select
-            name="select"
-            value={selectedOption}
-            className="w-2/5 ml-5 border rounded-xl text-gray-800 focus:outline-none focus:border-indigo-300 pl-4 h-10"
-            onChange={(e) => setSelectedOption(e.target.value)}
-          >
-            <option value="">Selecciona una opción</option>
-            {options.map(({ id, text }) => (
-              <option key={id} value={id}>
-                {text}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <div className="ml-4">
-        <button className="btn-primary">
-          <span className="mr-2">Enviar</span>
-          <i className="fa-regular fa-paper-plane" />
-        </button>
-      </div>
-    </form>
+  return (
+    <div className="flex gap-2 items-start">
+      {/* Textarea */}
+      <textarea
+        className="flex w-full border rounded-sm text-gray-800 focus:outline-none focus:border-indigo-300 pt-2 pl-4 h-10"
+        value={inputValue}
+        placeholder={placeholder}
+        rows={1}
+        onChange={(e) => onTextChange(e.target.value)}
+        onKeyDown={handleKeyDown}
+      />
+
+      {/* Select */}
+      <select
+        className="flex w-1/4 border rounded-sm text-gray-800 focus:outline-none focus:border-indigo-300 pt-1 pl-4 h-10"
+        onChange={(e) =>
+          onOptionSelect(
+            options.find((opt) => opt.text === e.target.value) || { text: "" }
+          )
+        }
+        defaultValue=""
+      >
+        <option value="" disabled>
+          Selecciona una especialidad
+        </option>
+        {options.map((option) => (
+          <option key={option.text} value={option.text}>
+            {option.text}
+          </option>
+        ))}
+      </select>
+
+      {/* Button */}
+      <button
+        className={`p-2 rounded ${
+          isLoading
+            ? "bg-red-500 text-white hover:bg-red-600"
+            : "bg-blue-500 text-white hover:bg-blue-600"
+        }`}
+        onClick={isLoading ? onAbort : onSendMessage}
+      >
+        {isLoading ? "Abortar" : "Enviar"}
+      </button>
+    </div>
   );
 };
