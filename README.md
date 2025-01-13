@@ -1,6 +1,19 @@
 # Ajustes previos
 
-Renombrar el archivo .env.template a .env en la raíz del proyecto
+Crear un archivo .env.template en .env en la raíz del proyecto y pegar esto:
+
+```
+DB_HOST=
+DB_PORT=
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=
+EXTERNAL_API_URL=http://localhost:5173
+JWT_SECRET_KEY=
+OPENAI_MAX_TOKENS=
+OPENAI_API_KEY=
+
+```
 
 ### Importar SQL
 
